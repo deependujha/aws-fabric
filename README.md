@@ -51,6 +51,8 @@ hostname -I # for ubuntu
 ## MMT on two nodes, each with 2 CPU devices
 
 > MMT: Multi-node, Multi-Device Training
+![command](/assets/command.png)
+
 
 ```bash
 # Terminal 1
@@ -73,6 +75,8 @@ fabric run \
     --num-nodes=2 \
     src/main.py
 ```
+
+![training](/assets/distributed-training.png)
 
 ---
 
