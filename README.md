@@ -10,7 +10,9 @@ echo "alias clean='clear;clear'" >> ~/.bashrc && source ~/.bashrc &&\
     sudo apt-get install -y build-essential &&\
     curl -LsSf https://astral.sh/uv/install.sh | sh &&\
     git clone https://github.com/deependujha/aws-fabric.git &&\
-    cd aws-fabric &&\
+    cd aws-fabric;
+
+source $HOME/.local/bin/env uv.sh &&\
     uv venv && source .venv/bin/activate &&\
     uv pip install -r requirements.txt &&\
     echo "Setup complete! Run 'source .venv/bin/activate' to activate the virtual environment."
