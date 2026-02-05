@@ -1,2 +1,3 @@
 torch
 lightning
+click # required for CLI
