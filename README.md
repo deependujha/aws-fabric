@@ -1,4 +1,4 @@
-# Multi-node distributed training on `AWS` using `Lightning Fabric`
+# Multi-node distributed training on `AWS` using `Lightning Fabric` ⚡️
 
 ## Create 2 AWS EC2 instances
 
