@@ -1,8 +1,25 @@
-# Command
+# Multi-node distributed training on `AWS` using `Lightning Fabric`
 
-- add `clean` command & Setup machine
+## Create 2 AWS EC2 instances
+
+- Use latest `Ubuntu` AMI
+- Instance type: `t2.large` (2 vCPU, 8 GiB memory)
+- Security Group: Allow ssh traffic and all tcp traffic between the instances (for inter-node communication)
+![security-group](/assets/security-group.png)
+
+- Add storage of `50 GB` or more (so you don't get out of space when installing dependencies)
+- Create 2 instances and connect in parallel using `tmux` or `terminator` (or any terminal multiplexer of your choice)
+![connect-instances](/assets/connect.png)
+
+---
+
+## Setup both machines for distributed training
+
+- add `clean` command (clear terminal, personal preference) & Setup machine
 
 ```bash
+# paste the following commands in both instances
+
 echo "alias clean='clear;clear'" >> ~/.bashrc && source ~/.bashrc &&\
     sudo apt-get update  &&\
     sudo apt-get upgrade -y &&\
@@ -15,36 +32,31 @@ echo "alias clean='clear;clear'" >> ~/.bashrc && source ~/.bashrc &&\
 source $HOME/.local/bin/env uv.sh &&\
     uv venv && source .venv/bin/activate &&\
     uv pip install -r requirements.txt &&\
-    echo "Setup complete! Run 'source .venv/bin/activate' to activate the virtual environment."
-```
-
-- single node, 4 CPU devices
-
-```bash
-fabric run \
-    --node-rank=0  \
-    --accelerator=cpu \
-    --devices=4 \
-    --num-nodes=1 \
-    src/main.py
+    echo "Setup complete!"
 ```
 
 ---
 
-- check address for 0th node
+## Get private IP address of 0th node (main node)
 
 ```bash
-(aws-fabric) ubuntu@ip-172-31-26-216:~/aws-fabric$ hostname -I
-> 172.31.26.216
+# on node 0
+hostname -I # for ubuntu
 ```
 
-- two nodes, each with 2 CPU devices (let main-address be the IP of node 0)
+- it should return something like `172.31.16.139`, which will be used as `main-address` for both nodes in the next step
+
+---
+
+## MMT on two nodes, each with 2 CPU devices
+
+> MMT: Multi-node, Multi-Device Training
 
 ```bash
 # Terminal 1
 fabric run \
     --node-rank=0  \
-    --main-address=172.31.26.216 \
+    --main-address=172.31.16.139 \
     --accelerator=cpu \
     --devices=2 \
     --num-nodes=2 \
@@ -55,9 +67,15 @@ fabric run \
 # Terminal 2
 fabric run \
     --node-rank=1  \
-    --main-address=172.31.26.216 \
+    --main-address=172.31.16.139 \
     --accelerator=cpu \
     --devices=2 \
     --num-nodes=2 \
     src/main.py
 ```
+
+---
+
+Thanks.
+
+Credits: [Lightning AI multi node training](https://lightning.ai/docs/fabric/stable/guide/multi_node/barebones.html)
